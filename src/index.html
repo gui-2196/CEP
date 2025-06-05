@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulta de CEP - ViaCEP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
+      padding: 10px;
+      width: 80%;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .resultado {
+      margin-top: 20px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Consulta de Endereço - ViaCEP</h2>
+    <input type="text" id="cep" placeholder="Digite o CEP" />
+    <br />
+    <button onclick="buscarCEP()">Buscar</button>
+    <div id="resultado" class="resultado"></div>
+  </div>
+
+  <script>
+    function buscarCEP() {
+      const cep = document.getElementById('cep').value;
+      const resultado = document.getElementById('resultado');
+      
+      if (!cep || cep.length !== 8) {
+        resultado.innerHTML = "<p style='color:red'>Por favor, insira um CEP válido com 8 dígitos.</p>";
+        return;
+      }
+
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.erro) {
+            resultado.innerHTML = "<p style='color:red'>CEP não encontrado.</p>";
+          } else {
+            resultado.innerHTML = `
+              <p><strong>Rua:</strong> ${data.logradouro}</p>
+              <p><strong>Bairro:</strong> ${data.bairro}</p>
+              <p><strong>Cidade:</strong> ${data.localidade}</p>
+              <p><strong>Estado:</strong> ${data.uf}</p>
+            `;
+          }
+        })
+        .catch(error => {
+          resultado.innerHTML = "<p style='color:red'>Erro ao buscar o CEP.</p>";
+          console.error(error);
+        });
+    }
+  </script>
+</body>
+</html>
